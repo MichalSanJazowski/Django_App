@@ -3,6 +3,7 @@ import json
 import pytest
 from django.test import Client
 from django.urls import reverse
+import logging
 
 from companies.models import Company
 
@@ -70,4 +71,35 @@ class TestPostCompanies(BasicCompanyAPITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn( "is not a valid choice",str(response_content))
 
+    @pytest.mark.xfail
+    def test_should_be_ok_if_fails(self):
+        self.assertEqual(1,2)
 
+    @pytest.mark.skip
+    def test_should_be_skipped(self):
+        self.assertEqual(1, 2)
+
+def test_raise_sample_exception():
+    raise ValueError("Sample Exception")
+
+def test_raise_sample_exception_should_pass():
+    with pytest.raises(ValueError) as e:
+        test_raise_sample_exception()
+    assert "Sample Exception" == str(e.value)
+
+logger = logging.getLogger("SAMPLE_LOGS")
+
+def function_that_logs_something():
+    try:
+        raise ValueError("Sample Exception")
+    except ValueError as e:
+        logger.warning(f"I am logging {str(e)}")
+
+def test_logged_warning_level(caplog):
+    function_that_logs_something()
+    assert "I am logging Sample Exception" in caplog.text
+
+def test_logged_info_level(caplog):
+    with caplog.at_level(logging.INFO):
+        logger.info("I am logging info level")
+        assert "I am logging info level" in caplog.text
