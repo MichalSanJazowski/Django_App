@@ -79,12 +79,12 @@ class TestPostCompanies(BasicCompanyAPITestCase):
     def test_should_be_skipped(self):
         self.assertEqual(1, 2)
 
-def test_raise_sample_exception():
+def raise_sample_exception():
     raise ValueError("Sample Exception")
 
 def test_raise_sample_exception_should_pass():
     with pytest.raises(ValueError) as e:
-        test_raise_sample_exception()
+        raise_sample_exception()
     assert "Sample Exception" == str(e.value)
 
 logger = logging.getLogger("SAMPLE_LOGS")
