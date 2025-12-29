@@ -1,4 +1,4 @@
-name: pytest
+name: Django + pytest
 
 on:
   push:
@@ -7,31 +7,36 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    # Django 6.0 wymaga Pythona >= 3.12
     strategy:
-      fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.12"]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
+          cache: "pip"
+          cache-dependency-path: requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          elif [ -f pyproject.toml ]; then
-            pip install -e .
-          else
-            echo "No requirements.txt or pyproject.toml found" && exit 1
-          fi
+          pip install -r requirements.txt
+
+      - name: Run migrations
+        env:
+          DJANGO_SETTINGS_MODULE: mysite.settings
+        run: |
+          python manage.py migrate --noinput
 
       - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: mysite.settings
         run: |
           pytest -q
