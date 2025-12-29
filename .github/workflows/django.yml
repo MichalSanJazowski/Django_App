@@ -32,7 +32,6 @@ jobs:
       - name: Run migrations
         env:
           DJANGO_SETTINGS_MODULE: mysite.settings
-          DJANGO_SECRET_KEY: 'django-insecure-w66fvs_^@=^6cyiu7f%_a39kee^+(g%fi^40vy2=$*1ly*=w0x'
         run: |
           python manage.py migrate --noinput
 
