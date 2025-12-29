@@ -1,4 +1,5 @@
-Django>=4.2,<6.0
-djangorestframework==3.16.1
-pytest==9.0.2
-python-dotenv==1.2.1
+Django>=4.2,<5.0
+djangorestframework
+pytest>=7.4,<8.0
+pytest-django
+python-dotenv
