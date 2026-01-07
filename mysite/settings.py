@@ -119,6 +119,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+# Source - https://stackoverflow.com/a
+# Posted by Jordan, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-01-07, License - CC BY-SA 3.0
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'michaljazowski1995@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
