@@ -33,7 +33,7 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: mysite.settings
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         run: |
           python manage.py migrate --noinput
 
