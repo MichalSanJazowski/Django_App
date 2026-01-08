@@ -6,10 +6,12 @@ from django.urls import reverse
 import logging
 
 from companies.models import Company
+
 companies_url = reverse("companies-list")
 pytestmark = pytest.mark.django_db
 
- #test get companies
+# test get companies
+
 
 def test_zero_companies_should_return_empty_list(client):
     response = client.get(companies_url)
@@ -24,33 +26,31 @@ def test_one_company_exist_should_succeed(client):
     assert response.status_code == 200
     assert response_content.get("name") == test_company.name
     assert response_content.get("status") == "Hiring"
-    assert response_content.get("application_link") ==  ""
+    assert response_content.get("application_link") == ""
     assert response_content.get("notes") == ""
     test_company.delete()
 
- #test post companies
+
+# test post companies
 
 
 def test_create_company_without_arguments_should_fail(client):
     response = client.post(path=companies_url)
     response_content = json.loads(response.content)
     assert response.status_code == 400
-    assert response_content.get("name") == [
-    "This field is required."
-]
+    assert response_content.get("name") == ["This field is required."]
 
 
 def test_create_existing_company_should_fail(client):
     test_company = Company.objects.create(name="New_one")
-    response = client.post(path=companies_url, data={"name":test_company.name})
+    response = client.post(path=companies_url, data={"name": test_company.name})
     response_content = json.loads(response.content)
     assert response.status_code == 400
-    assert response_content.get("name") ==  [
-        "company with this name already exists."]
+    assert response_content.get("name") == ["company with this name already exists."]
 
 
 def test_create_company_with_only_name_all_fields_should_be_default(client):
-    response = client.post(path=companies_url, data={"name":"test company name"})
+    response = client.post(path=companies_url, data={"name": "test company name"})
     response_content = json.loads(response.content)
     assert response.status_code == 201
     assert response_content.get("name") == "test company name"
@@ -60,36 +60,47 @@ def test_create_company_with_only_name_all_fields_should_be_default(client):
 
 
 def test_create_company_with_layoff_status(client):
-    response = client.post(path=companies_url, data={"name":"another test company name","status": "Layoffs"})
+    response = client.post(
+        path=companies_url,
+        data={"name": "another test company name", "status": "Layoffs"},
+    )
     response_content = json.loads(response.content)
     assert response.status_code == 201
     assert response_content.get("status") == "Layoffs"
 
 
 def test_wrong_status_should_fail(client):
-    response = client.post(path=companies_url,
-                                data={"name": "another new test company name", "status": "Layoffsen"})
+    response = client.post(
+        path=companies_url,
+        data={"name": "another new test company name", "status": "Layoffsen"},
+    )
     response_content = json.loads(response.content)
     assert response.status_code == 400
     assert "is not a valid choice" in str(response_content)
+
 
 @pytest.mark.xfail
 def test_should_be_ok_if_fails():
     assert 1 == 2
 
+
 @pytest.mark.skip
 def test_should_be_skipped():
-   assert 1 == 2
+    assert 1 == 2
+
 
 def raise_sample_exception():
     raise ValueError("Sample Exception")
+
 
 def test_raise_sample_exception_should_pass():
     with pytest.raises(ValueError) as e:
         raise_sample_exception()
     assert "Sample Exception" == str(e.value)
 
+
 logger = logging.getLogger("SAMPLE_LOGS")
+
 
 def function_that_logs_something():
     try:
@@ -97,14 +108,17 @@ def function_that_logs_something():
     except ValueError as e:
         logger.warning(f"I am logging {str(e)}")
 
+
 def test_logged_warning_level(caplog):
     function_that_logs_something()
     assert "I am logging Sample Exception" in caplog.text
+
 
 def test_logged_info_level(caplog):
     with caplog.at_level(logging.INFO):
         logger.info("I am logging info level")
         assert "I am logging info level" in caplog.text
+
 
 # Unitest Version
 # @pytest.mark.django_db

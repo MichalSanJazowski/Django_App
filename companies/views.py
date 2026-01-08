@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import CompanySerializer
 from .models import Company
 
+
 class CompanyViewSet(ModelViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.all().order_by("-last_update")
@@ -16,5 +17,12 @@ class CompanyViewSet(ModelViewSet):
 # Create your views here.
 @api_view(http_method_names=["POST"])
 def send_company_email(request):
-    send_mail(subject=request.data.get("subject"),message=request.data.get("message"),from_email="michaljazowski1995@gmail.com",recipient_list=["michaljazowski1995@gmail.com"])
-    return Response({"status":"success","info":"email sent successfully"}, status=200)
+    send_mail(
+        subject=request.data.get("subject"),
+        message=request.data.get("message"),
+        from_email="michaljazowski1995@gmail.com",
+        recipient_list=["michaljazowski1995@gmail.com"],
+    )
+    return Response(
+        {"status": "success", "info": "email sent successfully"}, status=200
+    )
