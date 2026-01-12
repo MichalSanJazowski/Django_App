@@ -184,4 +184,4 @@ Use Python 3.12 locally to match CI behavior.A
 ---
 
 ## Author
-Educational/testing project: Django + DRF + pytest.
+Developed by Michal San Jazowski
