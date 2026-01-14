@@ -18,10 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from companies.urls import companies_router
-from companies.views import send_company_email
+from companies.views import send_company_email,CompanyListCreateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(companies_router.urls)),
-    path("send-email", send_company_email),
+    path("send-email/", send_company_email),
+    path("companies/<int:pk>/", CompanyListCreateView.as_view(), name="companies"),
 ]

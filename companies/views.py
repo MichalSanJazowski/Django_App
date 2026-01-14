@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination, Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListCreateAPIView
 
 from .serializers import CompanySerializer
 from .models import Company
@@ -26,3 +27,15 @@ def send_company_email(request):
     return Response(
         {"status": "success", "info": "email sent successfully"}, status=200
     )
+
+
+class CompanyPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class CompanyListCreateView(ListCreateAPIView):
+    queryset = Company.objects.all().order_by("-last_update")
+    serializer_class = CompanySerializer
+    pagination_class = CompanyPagination
