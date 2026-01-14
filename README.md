@@ -1,187 +1,126 @@
-# Django Companies API — Testing-Oriented README
+# Django Companies API — QA Testing Oriented Project
 
-A small Django + Django REST Framework application for managing companies, with a simple email-sending endpoint.  
-This README is **focused on testing** (manual + automated): setup, API behavior, pytest usage, and CI.
+This project is a **Django + Django REST Framework** application created and extended **specifically for QA manual and junior automation practice**.
 
----
-
-## Table of Contents
-- Features
-- Tech Stack
-- Requirements
-- Local Setup
-- Environment Variables
-- API Endpoints
-- Testing with pytest
-- CI (GitHub Actions)
-- Common Issues
+The application exposes REST API endpoints that allow **manual testing with Postman**, validation of HTTP behavior, and basic database verification.
 
 ---
 
-## Features
-- CRUD for `Company` via DRF `ModelViewSet`
-- Default ordering by `last_update` (descending)
-- `POST /send-email` endpoint (email sending)
-- Test-friendly email handling (locmem backend + mocks)
+## 🎯 Project Purpose
+
+The main goal of this project is to practice and demonstrate:
+
+- Manual API testing (Postman)
+- Positive and negative test scenarios
+- HTTP methods and status codes
+- API validation issues (intentional gaps for QA testing)
+- Basic database verification (SQL / ORM)
+- Understanding REST principles from a QA perspective
+
+A **dedicated test endpoint** was intentionally added to make API testing easier and more realistic for QA work.
 
 ---
 
-## Tech Stack
-- Python
+## 🛠 Tech Stack
+
+- Python 3
 - Django
 - Django REST Framework
 - SQLite (default)
-- pytest + pytest-django
-- python-dotenv
+- Pytest (for backend tests)
+- Postman (manual API testing)
 
 ---
 
-## Requirements
-- Python **3.12** (matches CI)
-- pip
+## 🚀 Local Setup
 
----
-
-## Local Setup
-
-1) Clone the repo or unzip the archive.
-
-2) Create and activate a virtual environment:
 ```bash
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS/Linux
-source .venv/bin/activate
-```
-
-3) Install dependencies:
-```bash
+git clone https://github.com/MichalSanJazowski/Django_App.git
+cd Django_App
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-4) Configure environment variables (see below).
-
-5) Run migrations and start the server:
-```bash
 python manage.py migrate
 python manage.py runserver
 ```
 
----
-
-## Environment Variables
-
-Loaded from `.env` (via `python-dotenv`) or the system environment.
-
-Required:
-- `DJANGO_SECRET_KEY` — required by Django
-
-Optional (only if you want real SMTP sending):
-- `EMAIL_HOST_PASSWORD`
-
-Example `.env`:
-```env
-DJANGO_SECRET_KEY=dev-secret-key-change-me
-EMAIL_HOST_PASSWORD=dummy
+Application will be available at:
+```
+http://127.0.0.1:8000/
 ```
 
-> **Testing note:**  
-> Emails are handled safely in tests using:
-> - Django `locmem` email backend (`mailoutbox`)
-> - Mocking `send_mail` (no external calls)
-
 ---
 
-## API Endpoints
+## 🔗 API Endpoints
 
-### Companies (DRF router)
-- `GET /companies/` — list companies
-- `POST /companies/` — create a company
-- `GET /companies/{id}/` — retrieve details
-- `PUT/PATCH /companies/{id}/` — update
-- `DELETE /companies/{id}/` — delete
-
-**Company fields:**
-- `name` (unique)
-- `status` (Layoffs / Hiring Freeze / Hiring)
-- `last_update`
-- `application_link` (URL)
-- `notes`
-
-### Send Email
-- `POST /send-email`
-  - JSON body:
-    ```json
-    { "subject": "Subject", "message": "Message" }
-    ```
-  - In tests: mocked / locmem backend
-
----
-
-## Testing with pytest
-
-### Run tests
-```bash
-pytest -q
+### Companies (REST example)
+```
+GET    /companies/          → list companies
+POST   /companies/          → create company
+GET    /companies/{id}/     → retrieve company
+PATCH  /companies/{id}/     → update company
+DELETE /companies/{id}/     → delete company
 ```
 
-### Pytest configuration
-- `pytest.ini` sets `DJANGO_SETTINGS_MODULE=mysite.settings`
-- Test file patterns:
-  - `tests.py`
-  - `test_*.py`
-  - `*_tests.py`
-
-### Test structure
-- `companies/tests/test_api.py`
-  - API tests for `/companies/`
-  - Validation errors (400), choices, defaults
-  - Examples of `xfail`, `skip`, `pytest.raises`, and logging (`caplog`)
-- `companies/tests/test_emails.py`
-  - Email sending with `mailoutbox`
-  - `/send-email` endpoint with mocked `send_mail`
-  - Method restriction test (405 for GET)
-
-### Writing new tests (tips)
-- API tests: use `client` fixture (`pytest-django`)
-- Database access: mark with `@pytest.mark.django_db`
-- Email tests: prefer `mailoutbox` or mock `send_mail`
-
----
-
-## CI (GitHub Actions)
-
-CI runs on:
-- `push`
-- `pull_request`
-
-Steps:
-1. Install dependencies
-2. `python manage.py migrate --noinput`
-3. `pytest -q`
-
-CI uses **Python 3.12**.  
-Secrets like `DJANGO_SECRET_KEY` and `EMAIL_HOST_PASSWORD` are stored in **GitHub Secrets**.
-
----
-
-## Common Issues
-
-### SECRET_KEY missing
-Add `DJANGO_SECRET_KEY` to `.env` or set it in your environment.
-
-### Emails sent outside tests
-Ensure tests use the `locmem` email backend or mocks.  
-If modified, restore:
-```python
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+### Test Email Endpoint (QA / Postman testing)
+```
+POST /send-email/
 ```
 
-### Python version mismatch
-Use Python 3.12 locally to match CI behavior.A
+This endpoint was **added intentionally for manual API testing in Postman**.
+
+It allows:
+- testing POST requests
+- checking request body validation
+- verifying status codes
+- identifying missing backend validation (QA bug scenarios)
+
+Example request body:
+```json
+{
+  "subject": "Test subject",
+  "message": "Hello world"
+}
+```
 
 ---
 
-## Author
-Developed by Michal San Jazowski
+## 🧪 Manual Testing with Postman (QA Focus)
+
+This project is suitable for practicing:
+
+- Correct vs incorrect request payloads
+- Missing required fields
+- Invalid HTTP methods (405 Method Not Allowed)
+- Status codes: 200, 201, 400, 404, 405
+- REST rules (collection vs resource endpoints)
+- Bug reporting (validation issues, incorrect responses)
+
+---
+
+## 🧠 Example QA Findings
+
+- Missing required fields may still return `200 OK` → **validation bug**
+- DELETE on collection endpoint returns `405` → **correct REST behavior**
+- DELETE on resource endpoint works as expected
+
+---
+
+## 🧪 Automated Tests (Optional)
+
+Basic pytest configuration is included for backend-side testing.
+Manual API testing with Postman is the primary focus of this project.
+
+---
+
+## 📌 Notes
+
+- Authentication was intentionally omitted to simplify manual testing.
+- The project is designed as a **QA sandbox**, not a production-ready system.
+
+---
+
+## 👤 Author
+
+Developed by **Michal Sanak-Jazowski**  
+QA Manual / Junior Automation practice project
