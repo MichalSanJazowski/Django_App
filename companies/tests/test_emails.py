@@ -24,7 +24,7 @@ def test_send_email_should_succeed(mailoutbox, settings):
 def test_send_email_without_arguments_should_send_empty_email(client):
 
     with patch("companies.views.send_mail") as mocked_send_mail_function:
-        response = client.post(path="/send-email")
+        response = client.post(path="/send-email/")
         response_content = json.loads(response.content)
         assert response.status_code == 200
         assert response_content["status"] == "success"
@@ -38,6 +38,6 @@ def test_send_email_without_arguments_should_send_empty_email(client):
 
 
 def test_send_email_with_get_verb_should_fail(client):
-    response = client.get(path="/send-email")
+    response = client.get(path="/send-email/")
     assert response.status_code == 405
     assert json.loads(response.content) == {"detail": 'Method "GET" not allowed.'}
